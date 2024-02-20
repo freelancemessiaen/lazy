@@ -1,34 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { lazy, useState, Suspense } from 'react'
+import styles from './App.module.scss'
+import ComposantA from "./pages/ComposantsA/ComposantA"
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [page, setPage] = useState("a");
+
+  const ComposantB = lazy(() => {
+    return new Promise((res) => {
+      setTimeout(() => {
+      res(  import('./pages/ComposantB/ComposantB'))
+    },3000)
+    })
+  });
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className={`d-flex flex-column ${styles.appContainer}`}>
+      <nav className="d-flex p-20">
+        <button className='btn btnprimary mr-5' onClick={() => setPage("a")}>
+           Composant A
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <button className='btn btnprimary mr-5' onClick={() => setPage("b")}>
+           Composant B
+        </button>
+      </nav>
+      <div className="flex-fill p-20">
+        <Suspense fallback={ <h2>Loading ...</h2>}>
+        {page === "a" && <ComposantA/>}
+        {page === "b" && <ComposantB/>}
+        </Suspense>
+
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
